@@ -464,7 +464,6 @@ function renderConclusions(){
         <h4>${it.t}</h4>
         <div class="conclusion-row"><b>Dato:</b><span>${it.dato}</span></div>
         <div class="conclusion-row"><b>Interpretación:</b><span>${it.interp}</span></div>
-        <div class="conclusion-row"><b>Impacto:</b><span>${it.impacto}</span></div>
       </div>
     </div>`).join('');
 }
