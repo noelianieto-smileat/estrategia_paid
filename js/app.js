@@ -40,23 +40,105 @@ document.getElementById('tabnav').addEventListener('click', e=>{
    ============================================================ */
 function renderHero(){
   const m = DATA.meta, g = DATA.google, c = DATA.combined;
+
+  // Config de cada métrica seleccionable: valor Meta, valor Google, formateador y nota opcional
+  const metricsConfig = {
+    spend: {
+      label: 'Inversión total',
+      metaVal: m.spend, googleVal: g.accountTotal.spend,
+      fmt: fmtEUR, note: null
+    },
+    revenue: {
+      label: 'Ingresos generados',
+      metaVal: m.revenueEst, googleVal: g.accountTotal.value,
+      fmt: fmtEUR, note: null
+    },
+    roas: {
+      label: 'ROAS combinado',
+      metaVal: m.roasEst, googleVal: g.accountTotal.roas,
+      fmt: fmtX, note: 'Comparación relativa entre canales — el ROAS no es una magnitud acumulable, la barra no representa el reparto de un total.'
+    },
+    cpa: {
+      label: 'CPA Meta / Google',
+      metaVal: c.metaCpa, googleVal: c.googleCpa,
+      fmt: fmtEUR2, note: 'Comparación relativa entre canales — un CPA más bajo es mejor; la barra no representa el reparto de un total.'
+    },
+    results: {
+      label: 'Resultados totales',
+      metaVal: m.purchases, googleVal: g.accountTotal.conversions,
+      fmt: fmtNum, note: 'Compras (Meta) + conversiones (Google) — no representan usuarios únicos.'
+    }
+  };
+
   const kpis = [
-    {label:'Inversión total', value: fmtEUR(c.spend), sub:'Meta + Google · jul-ago 2026', solid:true},
-    {label:'Ingresos generados (est.)', value: fmtEUR(c.revenue), sub:'Basado en ROAS reportado'},
-    {label:'ROAS combinado', value: fmtX(c.roas), sub:'Por cada € invertido'},
-    {label:'CPA Meta / Google', value: `${fmtEUR2(c.metaCpa)} / ${fmtEUR2(c.googleCpa)}`, sub:'Coste por resultado'},
-    {label:'Resultados totales', value: fmtNum(m.purchases + g.accountTotal.conversions), sub:'Compras Meta + conversiones Google (no son usuarios únicos)'},
+    {label:'Inversión total', value: fmtEUR(c.spend), sub:'Meta + Google · jul-ago 2026', metric:'spend'},
+    {label:'Ingresos generados (est.)', value: fmtEUR(c.revenue), sub:'Basado en ROAS reportado', metric:'revenue'},
+    {label:'ROAS combinado', value: fmtX(c.roas), sub:'Por cada € invertido', metric:'roas'},
+    {label:'CPA Meta / Google', value: `${fmtEUR2(c.metaCpa)} / ${fmtEUR2(c.googleCpa)}`, sub:'Coste por resultado', metric:'cpa'},
+    {label:'Resultados totales', value: fmtNum(m.purchases + g.accountTotal.conversions), sub:'Compras Meta + conversiones Google (no son usuarios únicos)', metric:'results'},
   ];
   const row = document.getElementById('hero-kpis');
   kpis.forEach(k=>{
-    row.appendChild(el('div', `kpi-card${k.solid?' solid':''}`, `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div>`));
+    const card = el('div', `kpi-card kpi-card--clickable${k.metric==='spend'?' active':''}`, `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div>`);
+    card.dataset.metric = k.metric;
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-pressed', k.metric==='spend' ? 'true':'false');
+    row.appendChild(card);
   });
 
-  document.getElementById('hero-split').querySelector('.meta-part').style.width = c.metaShare+'%';
-  document.getElementById('hero-split').querySelector('.google-part').style.width = c.googleShare+'%';
-  document.getElementById('hero-split-legend').innerHTML = `
-    <span><span class="dot meta"></span>Meta Ads — ${fmtEUR(m.spend)} (${c.metaShare}%)</span>
-    <span><span class="dot google"></span>Google Ads — ${fmtEUR(g.accountTotal.spend)} (${c.googleShare}%)</span>`;
+  const barWrap = document.getElementById('hero-split');
+  const metaPart = barWrap.querySelector('.meta-part');
+  const googlePart = barWrap.querySelector('.google-part');
+  const legend = document.getElementById('hero-split-legend');
+  const noteEl = el('div','split-note hide');
+  noteEl.id = 'hero-split-note';
+  legend.insertAdjacentElement('afterend', noteEl);
+
+  function renderSplit(metricId){
+    const cfg = metricsConfig[metricId];
+    const total = cfg.metaVal + cfg.googleVal;
+    const metaPct = total ? (cfg.metaVal/total)*100 : 50;
+    const googlePct = total ? (cfg.googleVal/total)*100 : 50;
+
+    metaPart.style.width = metaPct + '%';
+    googlePart.style.width = googlePct + '%';
+
+    legend.innerHTML = `
+      <span><span class="dot meta"></span>Meta Ads — ${cfg.fmt(cfg.metaVal)} (${metaPct.toFixed(1)}%)</span>
+      <span><span class="dot google"></span>Google Ads — ${cfg.fmt(cfg.googleVal)} (${googlePct.toFixed(1)}%)</span>`;
+
+    noteEl.textContent = cfg.note || '';
+    noteEl.classList.toggle('hide', !cfg.note);
+  }
+
+  function selectMetric(metricId){
+    row.querySelectorAll('.kpi-card').forEach(cd=>{
+      const active = cd.dataset.metric===metricId;
+      cd.classList.toggle('active', active);
+      cd.setAttribute('aria-pressed', active ? 'true':'false');
+    });
+    legend.classList.add('fading');
+    window.setTimeout(()=>{
+      renderSplit(metricId);
+      legend.classList.remove('fading');
+    }, 140);
+  }
+
+  row.addEventListener('click', e=>{
+    const card = e.target.closest('.kpi-card[data-metric]');
+    if(!card) return;
+    selectMetric(card.dataset.metric);
+  });
+  row.addEventListener('keydown', e=>{
+    if(e.key!=='Enter' && e.key!==' ') return;
+    const card = e.target.closest('.kpi-card[data-metric]');
+    if(!card) return;
+    e.preventDefault();
+    selectMetric(card.dataset.metric);
+  });
+
+  renderSplit('spend');
 }
 
 /* ============================================================
