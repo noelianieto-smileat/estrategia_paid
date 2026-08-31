@@ -23,7 +23,6 @@ const DATA = {
     roasEst: 4.69,
     cpa: 10.06,
     note: "El export de Meta no incluye una columna de ROAS ni de valor de conversión por separado para el periodo 2025, por lo que la comparativa de ingresos y ROAS 2025 se marca N/D. Los ingresos 2026 son una estimación (ROAS × inversión) por campaña.",
-    shopifySubsGrowth: 7,
 
     // Estado de entrega de todas las campañas históricas del account (158 filas del export)
     accountHealth: { total: 158, active: 2, archived: 2, notDelivering: 1, inactive: 153 },
@@ -34,6 +33,7 @@ const DATA = {
         name: "ES - Ventas - PE - BOFU - ABO",
         objective: "Compras (BOFU)",
         status: "Activa",
+        started: null,
         spend: 31350.32,
         impressions: 10747611,
         reach: 418044,
@@ -44,27 +44,27 @@ const DATA = {
         roas: 5.93,
         revenueEst: 185922.4,
         funnel: "BOFU",
-        description: "La mayor parte del presupuesto diario de esta campaña se destina a captar nuevos usuarios suscritos, sin restar protagonismo a las promociones y lanzamientos de producto que se han ido activando durante el periodo.",
+        description: "La mayor parte del presupuesto diario se destina a la captación de nuevos suscriptores, sin dejar de dar peso a las promociones puntuales y a los lanzamientos de producto que conviven en la misma campaña.",
         adsets: [
-          { name: "PROS/RET - Always on - Suscripción always on", spend: 4312.65, purchases: 478, cpa: 9.02, roas: 5.23, reach: 181395, promo: "Suscripción", vigencia: "Desde el 13 abr · activa actualmente" },
-          { name: "PROS/RET(adv+) _Smilados_ugc", spend: 3469.24, purchases: 571, cpa: 6.08, roas: 7.62, reach: 160858, promo: "Smilados (UGC)", vigencia: "Desde el 30 abr · activa hasta dentro de poco" },
-          { name: "PROS/RET - Always on - Lanzamiento Gazpachito", spend: 2175.73, purchases: 272, cpa: 8.00, roas: 5.72, reach: 112308, promo: "Lanzamiento Gazpachito", vigencia: "5 may – principios de agosto" },
-          { name: "PROS/RET - Always on - Suscripción (IMG)", spend: 6073.71, purchases: 660, cpa: 9.20, roas: 5.38, reach: 196396, promo: "Suscripción", vigencia: "Desde el 10 jul · activa actualmente" },
-          { name: "PROS/RET - Suscripción (always on) - Test", spend: 5023.32, purchases: 334, cpa: 15.04, roas: 3.01, reach: 147336, promo: "Suscripción", vigencia: "Desde el 10 jul · activa actualmente" },
-          { name: "PROS/RET - Lanzamiento SMILOTES - Julio", spend: 3284.78, purchases: 376, cpa: 8.74, roas: 5.19, reach: 130252, promo: "Lanzamiento Smilotes", vigencia: "Desde el 14 jul · activa actualmente" },
-          { name: "PROS/RET - Lanzamiento SMILEAT KIDS", spend: 257.32, purchases: 51, cpa: 5.05, roas: 9.35, reach: 26490, promo: "Lanzamiento Smileat Kids", vigencia: "Desde el 25 ago · activa actualmente" },
-          { name: "PROS/RET - Regalo neverita +40€ (junio 2026)", spend: 1359.33, purchases: 345, cpa: 3.94, roas: 11.38, reach: 139785, promo: "Regalo Neverita", vigencia: "23 jun – mediados de julio" },
-          { name: "PROS/RET - Regalo neverita +40€ (suscripción)", spend: 2773.52, purchases: 536, cpa: 5.17, roas: 9.16, reach: 124557, promo: "Regalo Neverita", vigencia: "26 jun – pausada mediados de julio" },
-          { name: "PROS/RET - 15% Packs y 25% Suscripción", spend: 1362.35, purchases: 192, cpa: 7.10, roas: 7.15, reach: 81819, promo: "15% Packs / 25% Suscripción", vigencia: "26 jul – 2 ago" },
-          { name: "PROS/RET - Cubiertos - Agosto", spend: 1256.47, purchases: 148, cpa: 8.49, roas: 5.25, reach: 95200, promo: "Regalo Cubiertos", vigencia: "9 ago – 16 ago" }
-        ],
-        postAdsetNote: "El 30 de agosto ha arrancado la campaña de <b>Vuelta al Cole</b>, que estará activa hasta el 7 de septiembre. En el próximo informe incluiremos sus resultados.<br><br>La frecuencia es preferible visualizarla a nivel de creatividad y no de campaña o conjunto de anuncios, ya que la cifra de campaña es un acumulado de conjuntos de anuncios con distintas fechas de inicio y fin (algunos ya finalizados) que actualmente están activos o no — por lo que no refleja con precisión la frecuencia real que percibe la audiencia hoy."
+          { name: "PROS/RET - Always on - Suscripción always on", spend: 4312.65, purchases: 478, cpa: 9.02, roas: 5.23, reach: 181395, frequency: 8.07, promo: "Suscripción", dates: "Desde el 13 de abril · activa actualmente" },
+          { name: "PROS/RET(adv+) _Smilados_ugc", spend: 3469.24, purchases: 571, cpa: 6.08, roas: 7.62, reach: 160858, frequency: 8.70, promo: "Smilados (UGC)", dates: "Desde el 30 de abril · activa hasta dentro de poco" },
+          { name: "PROS/RET - Always on - Lanzamiento Gazpachito", spend: 2175.73, purchases: 272, cpa: 8.00, roas: 5.72, reach: 112308, frequency: 7.53, promo: "Lanzamiento Gazpachito", dates: "Desde el 5 de mayo hasta principios de agosto" },
+          { name: "PROS/RET - Always on - Suscripción (IMG)", spend: 6073.71, purchases: 660, cpa: 9.20, roas: 5.38, reach: 196396, frequency: 10.39, promo: "Suscripción", dates: "Desde el 10 de julio · activa actualmente" },
+          { name: "PROS/RET - Suscripción (always on) - Test", spend: 5023.32, purchases: 334, cpa: 15.04, roas: 3.01, reach: 147336, frequency: 12.37, promo: "Suscripción", dates: "Desde el 10 de julio · activa actualmente" },
+          { name: "PROS/RET - Lanzamiento SMILOTES - Julio", spend: 3284.78, purchases: 376, cpa: 8.74, roas: 5.19, reach: 130252, frequency: 8.68, promo: "Lanzamiento Smilotes", dates: "Desde el 14 de julio · activa actualmente" },
+          { name: "PROS/RET - Lanzamiento SMILEAT KIDS", spend: 257.32, purchases: 51, cpa: 5.05, roas: 9.35, reach: 26490, frequency: 2.75, promo: "Lanzamiento Smileat Kids", dates: "Desde el 25 de agosto · activa actualmente" },
+          { name: "PROS/RET - Regalo neverita +40€ (junio 2026)", spend: 1359.33, purchases: 345, cpa: 3.94, roas: 11.38, reach: 139785, frequency: 3.05, promo: "Regalo Neverita", dates: "Desde el 23 de junio hasta mediados de julio" },
+          { name: "PROS/RET - Regalo neverita +40€ (suscripción)", spend: 2773.52, purchases: 536, cpa: 5.17, roas: 9.16, reach: 124557, frequency: 5.60, promo: "Regalo Neverita", dates: "Desde el 26 de junio · pausada a mediados de julio" },
+          { name: "PROS/RET - 15% Packs y 25% Suscripción", spend: 1362.35, purchases: 192, cpa: 7.10, roas: 7.15, reach: 81819, frequency: 5.11, promo: "15% Packs / 25% Suscripción", dates: "Desde el 26 de julio hasta el 2 de agosto" },
+          { name: "PROS/RET - Cubiertos - Agosto", spend: 1256.47, purchases: 148, cpa: 8.49, roas: 5.25, reach: 95200, frequency: 4.51, promo: "Regalo Cubiertos", dates: "Desde el 9 de agosto hasta el 16 de agosto" }
+        ]
       },
       {
         id: "mofu",
         name: "ES - Ventas -ADT - MOFU-ABO",
-        objective: "Compras (MOFU) · captación",
+        objective: "Compras (MOFU) · captación / medio de embudo",
         status: "Activa",
+        started: "En curso",
         spend: 7901.41,
         impressions: 2727117,
         reach: 364370,
@@ -75,14 +75,13 @@ const DATA = {
         roas: 3.22,
         revenueEst: 25424.34,
         funnel: "MOFU",
-        description: "",
+        description: "Se ha actualizado el creativo del conjunto de captación de cliente nuevo, sustituyendo el post en promoción por una publicación más reciente de Instagram para evitar la alta frecuencia que estaba acumulando el anterior. Además, se han incorporado recientemente los conjuntos de recetas y consideración, orientados a dar más visibilidad a este tipo de contenido: llegan a usuarios en fase de consideración, mantienen la marca presente durante su proceso de decisión y ayudan a que puedan convertirse más adelante en compradores.",
         adsets: [
-          { name: "PROS - Capta cliente nuevo - Juan Llorca -/platitos /dudas tarritos", spend: 4795.83, purchases: 142, cpa: 33.77, roas: null, reach: 265455, promo: "Captación · contenido Juan Llorca", vigencia: "Activa" },
-          { name: "PROS - Juan Llorca / Gazpachito", spend: 144.60, purchases: 8, cpa: 18.08, roas: null, reach: 14841, promo: "Lanzamiento Gazpachito", vigencia: "Activa" },
-          { name: "PROS - Recetas", spend: 2776.78, purchases: 304, cpa: 9.13, roas: null, reach: 140121, promo: "Contenido MOFU · recetas", vigencia: "Añadido recientemente" },
-          { name: "PROS - Consideracion", spend: 183.95, purchases: 67, cpa: 2.75, roas: null, reach: 12093, promo: "Consideración", vigencia: "Añadido recientemente" }
-        ],
-        postAdsetNote: "<b>Qué hemos cambiado:</b> en el conjunto \"PROS – Capta cliente nuevo\" hemos sustituido la publicación orgánica que se estaba promocionando, ya que acumulaba una frecuencia muy alta, por una pieza más reciente publicada en Instagram.<br><br>Los conjuntos de <b>Recetas</b> y <b>Consideración</b> se han incorporado recientemente para dar más visibilidad a este tipo de contenido e impactar a los usuarios que están en fase de consideración: personas que ya conocen la marca y que queremos que sigan teniéndola presente, con el objetivo de acompañarlas hasta convertirlas en compradoras."
+          { name: "PROS - Capta cliente nuevo - Juan Llorca -/platitos /dudas tarritos", spend: 4795.83, purchases: 142, cpa: 33.77, roas: null, reach: 265455, promo: "Captación · contenido Juan Llorca" },
+          { name: "PROS - Juan Llorca / Gazpachito", spend: 144.60, purchases: 8, cpa: 18.08, roas: null, reach: 14841, promo: "Lanzamiento Gazpachito" },
+          { name: "PROS - Recetas", spend: 2776.78, purchases: 304, cpa: 9.13, roas: null, reach: 140121, promo: "Contenido MOFU · recetas" },
+          { name: "PROS - Consideracion", spend: 183.95, purchases: 67, cpa: 2.75, roas: null, reach: 12093, promo: "Consideración" }
+        ]
       }
     ],
 
@@ -90,8 +89,8 @@ const DATA = {
     // Nota: los exports agregan todo el rango 1 jul–28 ago; el mes se estima por la fecha de inicio del adset.
     promotions: [
       { name: "Suscripción (recurrente)", month: "Jul + Ago", spend: 15409.68, purchases: 1472, roasAvg: 5.6, note: "3 adsets always-on con foco en alta de suscripción. Es, con diferencia, la mayor partida de inversión BOFU (49% del presupuesto de la campaña BOFU)." },
-      { name: "Lanzamiento Smilotes", month: "Desde julio · activa", spend: 3284.78, purchases: 376, roasAvg: 5.19, note: "Lanzamiento de producto con campaña dedicada desde el 14 de julio; sigue activa a día de hoy, no solo durante el lanzamiento." },
-      { name: "Regalo Neverita (+40€)", month: "Jun → mediados jul", spend: 4132.85, purchases: 881, roasAvg: 10.1, note: "La promoción con mejor ROAS de todo julio-agosto. Arrancó en junio y estuvo activa hasta mediados de julio." },
+      { name: "Lanzamiento Smilotes", month: "Desde julio · activa actualmente", spend: 3284.78, purchases: 376, roasAvg: 5.19, note: "Lanzamiento de producto con campaña dedicada desde el 14 de julio; sigue activa actualmente, no se limitó al mes de lanzamiento." },
+      { name: "Regalo Neverita (+40€)", month: "Jun→Jul", spend: 4132.85, purchases: 881, roasAvg: 10.1, note: "La promoción con mejor ROAS de todo julio-agosto. Arrancó en junio y estuvo activa hasta mediados de julio." },
       { name: "15% packs / 25% suscripción", month: "Julio", spend: 1362.35, purchases: 192, roasAvg: 7.15, note: "Promo puntual de descuento combinado, lanzada el 26 de julio." },
       { name: "Smilados (UGC)", month: "Jul + Ago", spend: 3469.24, purchases: 571, roasAvg: 7.62, note: "Creatividad UGC de Smilados, activa desde finales de abril y mantenida en verano por su rendimiento." },
       { name: "Lanzamiento Smileat Kids", month: "Agosto", spend: 257.32, purchases: 51, roasAvg: 9.35, note: "Lanzamiento más reciente (25 de agosto). Muy pocos días de datos, pero el ROAS inicial es el más alto de la cuenta." },
@@ -128,7 +127,7 @@ const DATA = {
         "No conocen packs personalizados específicos"
       ],
       demographicSkew: "Dentro del alcance de las campañas activas, el grupo 35–44 años (mujeres y hombres) es el que concentra más impactos, por delante del resto de franjas de edad.",
-      caveat: "Importante: estos intereses son los criterios de segmentación configurados en los conjuntos de anuncios (a quién decidimos apuntar), no un dato verificado de los intereses reales de cada persona alcanzada. Meta no expone qué intereses reales tiene cada usuario impactado, solo agregados de segmentación y edad/género. Los exports proporcionados no incluyen un desglose demográfico o por intereses con métricas de rendimiento asociadas, por lo que no es posible cuantificar aquí el peso exacto (% de alcance o gasto) de cada segmento."
+      caveat: "Importante: estos intereses son los criterios de segmentación configurados en los conjuntos de anuncios (a quién decidimos apuntar), no un dato verificado de los intereses reales de cada persona alcanzada. Meta no expone qué intereses reales tiene cada usuario impactado, solo agregados de segmentación y edad/género. Los exports proporcionados no incluyen un desglose demográfico o por intereses con métricas de rendimiento asociadas — por lo que no es posible cuantificar aquí el peso exacto (% de alcance o gasto) de cada segmento."
     },
 
     strategyEvolution: [
@@ -145,6 +144,12 @@ const DATA = {
       bofu: 25.71,
       mofu: 7.48,
       note: "La frecuencia de BOFU (25,7 impactos por persona en 59 días) es muy elevada — resultado de concentrar el 69% del presupuesto en un alcance comparativamente pequeño (418.044 personas) con remarketing always-on. MOFU, con un público más amplio y de prospección, mantiene una frecuencia mucho más sana (7,5). Los datos disponibles no incluyen una serie temporal día a día de frecuencia ni de CTR por creatividad, por lo que no se puede confirmar de forma cuantitativa si la fatiga creativa ya está afectando al rendimiento; el número de creatividades activas por adset tampoco está en el export. Se recomienda monitorizar frecuencia y CTR por adset en el propio Meta Ads Manager con detalle semanal."
+    },
+
+    subscriberGrowth: {
+      pct: 7,
+      source: "Shopify",
+      note: "A nivel de suscriptores, según el informe de Shopify, se ha registrado un incremento del 7% respecto al periodo anterior."
     }
   },
 
@@ -176,9 +181,6 @@ const DATA = {
       roas: 24.17, roasPrev: 16.29
     },
 
-    legacySpend: 7213.86,
-    legacyNote: "La diferencia entre el total de cuenta (17.537,45€) y la suma de las 8 campañas activas hoy (10.323,59€) — 7.213,86€ — corresponde a actividad de campañas que ya no forman parte de la estructura actual: sobre todo una campaña de Vídeo (5.326,20€ de gasto, 0 conversiones registradas) y actividad adicional de Performance Max y Generación de Demanda. Los datos sugieren que esta inversión sin retorno claro es precisamente la que se ha ido retirando en la reestructuración hacia Suscripción, Brand, Productos y Lanzamientos.",
-
     activeCampaigns: [
       { name: "ES | ESP | Search | Brand | Smileat", type: "Búsqueda", priority: "Brand", strategy: "ROAS objetivo", spend: 1298.48, impressions: 34731, clicks: 17336, ctr: 49.92, conversions: 2951.10, value: 174705.53, cpa: 0.44, roas: 134.55 },
       { name: "ES | PMÁX | Suscripción", type: "Rendimiento máximo", priority: "Suscripción", strategy: "ROAS objetivo", spend: 1750.16, impressions: 46209, clicks: 3697, ctr: 8.00, conversions: 406.07, value: 19031.69, cpa: 4.31, roas: 10.87 },
@@ -201,12 +203,8 @@ const DATA = {
 
     restructuring: {
       before: ["Creatividades sin actualizar", "Campañas antiguas de baja actividad", "Campañas con rendimiento decreciente (p. ej. Vídeo, sin conversiones)", "Estructura no alineada con las prioridades actuales del negocio"],
-      after: ["1. Suscripción — Search, Performance Max y Demand Gen dedicados", "2. Brand — Search de marca, la campaña más eficiente de toda la cuenta (ROAS 134,6)", "3. Productos — Performance Max de catálogo", "4. Lanzamientos / Promos — Performance Max + Demand Gen para novedades (Kids)", "+ Remarketing dinámico en Display"],
-      dataNote: "No se ha incluido en este envío un export histórico de la estructura de campañas previa a la reestructuración (solo se adjuntó el informe de campañas activas), por lo que no es posible cuantificar aquí el 'antes' campaña a campaña. El análisis de impacto se basa en dos evidencias que sí están en los datos: (1) la comparación de las 8 campañas de la estructura actual frente a su propio periodo anterior, y (2) el gasto 'legacy' identificado en Vídeo y actividad adicional fuera de la estructura filtrada."
-    },
-
-    keywordsNote: "Los exports proporcionados son a nivel de campaña (Informe de campaña de Google Ads); no incluyen un desglose de keywords ni de audiencias (remarketing, Customer Match, in-market, segmentos personalizados) con sus métricas. No es posible identificar aquí keywords o audiencias concretas de mayor o menor eficiencia. Se marca N/D. Recomendamos añadir el 'Informe de términos de búsqueda' y el 'Informe de audiencias' en un próximo envío de datos.",
-    creativesNote: "Los exports proporcionados no incluyen recursos creativos (imágenes, RSA, vídeos) de Google Ads, a diferencia de Meta. No es posible mostrar aquí los anuncios de Google. Se marca N/D."
+      after: ["1. Suscripción — Search, Performance Max y Demand Gen dedicados", "2. Brand — Search de marca, la campaña más eficiente de toda la cuenta (ROAS 134,6)", "3. Productos — Performance Max de catálogo", "4. Lanzamientos / Promos — Performance Max + Demand Gen para novedades (Kids)", "+ Remarketing dinámico en Display"]
+    }
   },
 
   combined: {

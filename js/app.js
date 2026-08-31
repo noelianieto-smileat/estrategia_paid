@@ -36,82 +36,28 @@ document.getElementById('tabnav').addEventListener('click', e=>{
 });
 
 /* ============================================================
-   HERO (con filtro clicable Total / Meta / Google)
+   HERO
    ============================================================ */
-let heroView = 'total';
-
-function heroKpis(view){
+function renderHero(){
   const m = DATA.meta, g = DATA.google, c = DATA.combined;
-  if(view==='meta'){
-    return [
-      {label:'Inversión Meta', value: fmtEUR(m.spend), sub:'Jul-ago 2026', solid:true},
-      {label:'Ingresos generados (est.)', value: fmtEUR(m.revenueEst), sub:'Basado en ROAS reportado'},
-      {label:'ROAS', value: fmtX(m.roasEst), sub:'Por cada € invertido'},
-      {label:'CPA', value: fmtEUR2(m.cpa), sub:'Coste por resultado'},
-      {label:'Resultados', value: fmtNum(m.purchases), sub:'Compras en Meta Ads'},
-    ];
-  }
-  if(view==='google'){
-    return [
-      {label:'Inversión Google', value: fmtEUR(g.accountTotal.spend), sub:'Jul-ago 2026', solid:true},
-      {label:'Ingresos generados', value: fmtEUR(g.accountTotal.value), sub:'Valor de conversión reportado'},
-      {label:'ROAS', value: fmtX(g.accountTotal.roas), sub:'Por cada € invertido'},
-      {label:'CPA', value: fmtEUR2(g.accountTotal.cpa), sub:'Coste por resultado'},
-      {label:'Resultados', value: fmtNum1(g.accountTotal.conversions), sub:'Conversiones en Google Ads'},
-    ];
-  }
-  return [
+  const kpis = [
     {label:'Inversión total', value: fmtEUR(c.spend), sub:'Meta + Google · jul-ago 2026', solid:true},
     {label:'Ingresos generados (est.)', value: fmtEUR(c.revenue), sub:'Basado en ROAS reportado'},
     {label:'ROAS combinado', value: fmtX(c.roas), sub:'Por cada € invertido'},
     {label:'CPA Meta / Google', value: `${fmtEUR2(c.metaCpa)} / ${fmtEUR2(c.googleCpa)}`, sub:'Coste por resultado'},
     {label:'Resultados totales', value: fmtNum(m.purchases + g.accountTotal.conversions), sub:'Compras Meta + conversiones Google (no son usuarios únicos)'},
   ];
-}
-
-function renderHero(){
-  const m = DATA.meta, g = DATA.google, c = DATA.combined;
   const row = document.getElementById('hero-kpis');
-  row.innerHTML = '';
-  row.className = 'kpi-row';
-  heroKpis(heroView).forEach(k=>{
+  kpis.forEach(k=>{
     row.appendChild(el('div', `kpi-card${k.solid?' solid':''}`, `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div>`));
   });
 
-  const bar = document.getElementById('hero-split');
-  bar.querySelector('.meta-part').style.width = c.metaShare+'%';
-  bar.querySelector('.google-part').style.width = c.googleShare+'%';
-  bar.querySelectorAll('[data-view]').forEach(seg=> seg.classList.toggle('active', heroView===seg.dataset.view));
-
+  document.getElementById('hero-split').querySelector('.meta-part').style.width = c.metaShare+'%';
+  document.getElementById('hero-split').querySelector('.google-part').style.width = c.googleShare+'%';
   document.getElementById('hero-split-legend').innerHTML = `
-    <span class="legend-btn ${heroView==='meta'?'active':''}" data-view="meta"><span class="dot meta"></span>Meta Ads — ${fmtEUR(m.spend)} (${c.metaShare}%)</span>
-    <span class="legend-btn ${heroView==='google'?'active':''}" data-view="google"><span class="dot google"></span>Google Ads — ${fmtEUR(g.accountTotal.spend)} (${c.googleShare}%)</span>
-    <span class="legend-btn ${heroView==='total'?'active':''}" data-view="total">Ver total</span>`;
+    <span><span class="dot meta"></span>Meta Ads — ${fmtEUR(m.spend)} (${c.metaShare}%)</span>
+    <span><span class="dot google"></span>Google Ads — ${fmtEUR(g.accountTotal.spend)} (${c.googleShare}%)</span>`;
 }
-
-const HERO_CYCLE = ['total','meta','google'];
-function cycleHeroView(){
-  const idx = HERO_CYCLE.indexOf(heroView);
-  heroView = HERO_CYCLE[(idx+1) % HERO_CYCLE.length];
-  renderHero();
-}
-
-function setHeroView(view){
-  heroView = (heroView===view) ? 'total' : view;
-  renderHero();
-}
-
-document.getElementById('hero-kpis').addEventListener('click', ()=> cycleHeroView());
-document.getElementById('hero-split').addEventListener('click', e=>{
-  const seg = e.target.closest('[data-view]');
-  if(seg) setHeroView(seg.dataset.view);
-});
-document.getElementById('hero-split-legend').addEventListener('click', e=>{
-  const btn = e.target.closest('[data-view]');
-  if(!btn) return;
-  if(btn.dataset.view==='total'){ heroView='total'; renderHero(); }
-  else setHeroView(btn.dataset.view);
-});
 
 /* ============================================================
    META — Campañas activas
@@ -121,11 +67,11 @@ function renderMetaCampaigns(){
   DATA.meta.activeCampaigns.forEach(camp=>{
     const card = el('div','campaign-card');
     card.appendChild(el('div','campaign-card__top', `
-      <div><h3>${camp.name}</h3><div class="obj">${camp.objective}</div></div>
+      <div><h3>${camp.name}</h3><div class="obj">${camp.objective}${camp.started ? ' · desde ' + camp.started : ''}</div></div>
       <div class="status-pill">● ${camp.status}</div>
     `));
     const body = el('div','campaign-card__body');
-    if(camp.description){ body.appendChild(el('p','campaign-card__desc', camp.description)); }
+    if(camp.description) body.appendChild(el('p','campaign-card__desc', camp.description));
     const metrics = [
       ['Inversión', fmtEUR(camp.spend)],
       ['Compras', fmtNum(camp.purchases)],
@@ -143,15 +89,14 @@ function renderMetaCampaigns(){
     let rows = camp.adsets.map(a=>`<tr>
         <td>${a.name}</td>
         <td><span class="promo-tag">${a.promo}</span></td>
-        <td>${a.vigencia||'N/D'}</td>
+        <td class="period-cell">${a.dates || '—'}</td>
         <td class="num">${fmtEUR(a.spend)}</td>
         <td class="num">${fmtNum(a.purchases)}</td>
         <td class="num">${a.cpa!=null?fmtEUR2(a.cpa):'N/D'}</td>
         <td class="num">${a.roas!=null?fmtX(a.roas):'N/D'}</td>
         <td class="num">${fmtNum(a.reach)}</td>
       </tr>`).join('');
-    details.appendChild(el('div','', `<table class="data-table"><thead><tr><th>Conjunto de anuncios</th><th>Promoción</th><th>Vigencia</th><th class="num">Inversión</th><th class="num">Compras</th><th class="num">CPA</th><th class="num">ROAS</th><th class="num">Alcance</th></tr></thead><tbody>${rows}</tbody></table>`));
-    if(camp.postAdsetNote){ details.appendChild(el('div','callout', camp.postAdsetNote)); }
+    details.appendChild(el('div','', `<table class="data-table"><thead><tr><th>Conjunto de anuncios</th><th>Promoción</th><th>Periodo activo</th><th class="num">Inversión</th><th class="num">Compras</th><th class="num">CPA</th><th class="num">ROAS</th><th class="num">Alcance</th></tr></thead><tbody>${rows}</tbody></table>`));
     card.appendChild(details);
     wrap.appendChild(card);
   });
@@ -162,26 +107,69 @@ function renderMetaCampaigns(){
    ============================================================ */
 function renderMetaPeriod(){
   const m = DATA.meta;
-  const grid = document.getElementById('meta-period-compare');
-  const items = [
-    {l:'Inversión', v:fmtEUR(m.spend)},
-    {l:'Ingresos / valor de resultados', v:fmtEUR(m.revenueEst)},
-    {l:'ROAS', v:fmtX(m.roasEst)},
-    {l:'Coste por resultado (CPA)', v:fmtEUR2(m.cpa)},
-    {l:'Compras', v:fmtNum(m.purchases)},
-    {l:'Impresiones', v:fmtNum(m.impressions)},
-    {l:'Clics', v:'N/D'},
+
+  // Grupos de cuadros de resultados (tabs / selector interactivo)
+  const groups = [
+    {
+      id: 'rendimiento', label: 'Rendimiento',
+      items: [
+        {l:'Coste por resultado', v: fmtEUR2(m.cpa)},
+        {l:'ROAS', v: fmtX(m.roasEst)},
+        {l:'Ingresos / valor de los resultados', v: fmtEUR(m.revenueEst)},
+        {l:'Compras', v: fmtNum(m.purchases)},
+      ]
+    },
+    {
+      id: 'alcance', label: 'Inversión y alcance',
+      items: [
+        {l:'Inversión', v: fmtEUR(m.spend)},
+        {l:'Impresiones', v: fmtNum(m.impressions)},
+        {l:'Clics', v: 'N/D', sub: 'No disponible en el export de Meta'},
+        {l:'Alcance', v: fmtNum(m.reach)},
+      ]
+    }
   ];
-  items.forEach(it=>{
-    grid.appendChild(el('div','compare-card', `<div class="label">${it.l}</div><div class="value">${it.v}</div>`));
+
+  const tabsWrap = el('div','result-tabs');
+  groups.forEach((g,i)=>{
+    const btn = el('button', `result-tab-btn${i===0?' active':''}`, g.label);
+    btn.type = 'button';
+    btn.dataset.tab = g.id;
+    tabsWrap.appendChild(btn);
+  });
+
+  const panelsWrap = el('div','result-tab-panels');
+  groups.forEach((g,i)=>{
+    const panel = el('div', `result-tab-panel compare-grid${i===0?' active':''}`);
+    panel.dataset.tabPanel = g.id;
+    g.items.forEach(it=>{
+      panel.appendChild(el('div','compare-card', `<div class="label">${it.l}</div><div class="value">${it.v}</div>${it.sub?`<div class="sub-nd">${it.sub}</div>`:''}`));
+    });
+    panelsWrap.appendChild(panel);
+  });
+
+  const host = document.getElementById('meta-period-compare');
+  host.classList.remove('compare-grid');
+  host.appendChild(tabsWrap);
+  host.appendChild(panelsWrap);
+
+  tabsWrap.addEventListener('click', e=>{
+    const btn = e.target.closest('.result-tab-btn');
+    if(!btn) return;
+    tabsWrap.querySelectorAll('.result-tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    panelsWrap.querySelectorAll('.result-tab-panel').forEach(p=> p.classList.toggle('active', p.dataset.tabPanel===btn.dataset.tab));
   });
 
   document.getElementById('meta-period-narrative').innerHTML = `
     <div class="callout">
-      Con una inversión de <b>${fmtEUR(m.spend)}</b> en Meta durante julio y agosto hemos conseguido <b>${fmtNum(m.purchases)} compras</b> y unos ingresos estimados de <b>${fmtEUR(m.revenueEst)}</b> — un ROAS de <b>${fmtX(m.roasEst)}</b> y un coste por resultado de <b>${fmtEUR2(m.cpa)}</b>. Los exports de Meta no incluyen clics ni CTR a nivel de campaña, por lo que esa métrica se marca N/D.
+      Con una inversión de ${fmtEUR(m.spend)} hemos conseguido un total de ${fmtEUR(m.revenueEst)} de ingresos, generando ${fmtNum(m.purchases)} compras y alcanzando un ROAS de ${fmtX(m.roasEst)}.
+    </div>
+    <div class="callout subscriber-highlight">
+      <div class="sh-label">Crecimiento de suscriptores</div>
+      <div class="sh-value">+${DATA.meta.subscriberGrowth.pct}%</div>
+      <div class="sh-note">${DATA.meta.subscriberGrowth.note}</div>
     </div>`;
-
-  document.getElementById('meta-shopify-note').innerHTML = `<b>Suscriptores:</b> según el informe de Shopify, el número de usuarios suscritos ha crecido un <b>+${m.shopifySubsGrowth}%</b> respecto al periodo anterior — el indicador al que más importancia damos, porque es el objetivo de negocio prioritario.`;
 }
 
 /* ============================================================
@@ -248,6 +236,7 @@ function renderMetaCreatives(){
     return g;
   }
   const julioWrap = document.getElementById('meta-creatives-julio');
+  julioWrap.appendChild(el('p','creatives-intro', 'A continuación se muestran algunos ejemplos representativos de las creatividades utilizadas durante el periodo.'));
   julioWrap.appendChild(el('h3','', 'Julio 2026'));
   DATA.meta.creatives.julio.forEach(pg=> julioWrap.appendChild(buildGroup(pg,'julio')));
 
@@ -353,9 +342,6 @@ function renderGooglePriorities(){
 }
 
 /* ============================================================
-   GOOGLE — Notas keywords / creatividades
-   ============================================================ */
-/* ============================================================
    VISIÓN CONJUNTA
    ============================================================ */
 function renderJoint(){
@@ -404,21 +390,17 @@ function renderConclusions(){
 /* ============================================================
    INIT
    ============================================================ */
-function safeRender(name, fn){
-  try{ fn(); }
-  catch(err){ console.error('Error rendering '+name+':', err); }
-}
-safeRender('hero', renderHero);
-safeRender('metaCampaigns', renderMetaCampaigns);
-safeRender('metaPeriod', renderMetaPeriod);
-safeRender('metaPromotions', renderMetaPromotions);
-safeRender('metaAudience', renderMetaAudience);
-safeRender('metaStrategy', renderMetaStrategy);
-safeRender('metaFunnel', renderMetaFunnel);
-safeRender('metaCreatives', renderMetaCreatives);
-safeRender('googleCampaigns', renderGoogleCampaigns);
-safeRender('googleRestructure', renderGoogleRestructure);
-safeRender('googleImpact', renderGoogleImpact);
-safeRender('googlePriorities', renderGooglePriorities);
-safeRender('joint', renderJoint);
-safeRender('conclusions', renderConclusions);
+renderHero();
+renderMetaCampaigns();
+renderMetaPeriod();
+renderMetaPromotions();
+renderMetaAudience();
+renderMetaStrategy();
+renderMetaFunnel();
+renderMetaCreatives();
+renderGoogleCampaigns();
+renderGoogleRestructure();
+renderGoogleImpact();
+renderGooglePriorities();
+renderJoint();
+renderConclusions();
