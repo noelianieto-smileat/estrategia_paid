@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smileat · Paid Media Performance — Jul-Ago 2026</title>
+<meta name="description" content="Informe de estrategia y resultados de Paid Media de Smileat. Meta Ads y Google Ads, julio-agosto 2026.">
+<link rel="icon" href="assets/img/logo-blue.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================= HEADER ============================= -->
+<header class="site-header">
+  <div class="wrap">
+    <div class="logo"><img src="assets/img/logo-white.png" alt="Smileat"></div>
+    <nav class="tabnav" id="tabnav">
+      <button type="button" data-panel="meta" class="active">META ADS</button>
+      <button type="button" data-panel="google">GOOGLE ADS</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================= HERO / INTRO ============================= -->
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Informe de estrategia · Dirección</span>
+    <h1>Paid Media Performance</h1>
+    <p class="lede">Qué hemos hecho, cuánto hemos invertido, a quién hemos llegado y qué resultados hemos conseguido en Meta Ads y Google Ads — con el estado actual de las campañas que siguen en marcha hoy.</p>
+    <div class="hero-meta">
+      <span>Periodo: <b>1 julio — 28 agosto 2026</b></span>
+      <span>Comparativa: <b>1 julio — 28 agosto 2025</b> (Meta) · <b>3 mayo — 30 junio 2026</b> (Google)</span>
+      <span>Objetivo de negocio: <b>Ventas + crecimiento de usuarios suscritos</b></span>
+    </div>
+
+    <div class="kpi-row" id="hero-kpis"></div>
+
+    <div class="split-bar" id="hero-split"><div class="meta-part"></div><div class="google-part"></div></div>
+    <div class="split-legend" id="hero-split-legend"></div>
+  </div>
+</section>
+
+<svg class="smile-divider tint" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0,0 C300,45 900,45 1200,0 L1200,40 L0,40 Z"></path></svg>
+
+<!-- ============================= PANEL META ============================= -->
+<main id="panel-meta">
+
+  <section class="block tint" id="meta-campaigns-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Actualmente</span>
+        <h2>Campañas activas en Meta</h2>
+        <p>Esto es lo que estamos promocionando actualmente en Meta: 2 campañas activas concentrando la inversión en venta directa y captación.</p>
+      </div>
+      <div id="meta-active-campaigns"></div>
+    </div>
+  </section>
+
+  <svg class="smile-divider" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0,40 C300,-5 900,-5 1200,40 L1200,0 L0,0 Z" fill="#ffffff"></path></svg>
+
+  <section class="block" id="meta-period-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Julio – agosto 2026</span>
+        <h2>¿Cómo ha ido el periodo?</h2>
+        <p>Resultados de toda la actividad de Meta durante julio y agosto.</p>
+      </div>
+      <div class="compare-grid" id="meta-period-compare"></div>
+      <div id="meta-period-narrative"></div>
+      <div class="callout" id="meta-shopify-note"></div>
+    </div>
+  </section>
+
+  <section class="block tint" id="meta-promo-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Campañas y promociones</span>
+        <h2>¿En qué hemos invertido y qué hemos conseguido?</h2>
+        <p>Cada promoción o lanzamiento del periodo, con su inversión, ventas y ROAS asociados a nivel de conjunto de anuncios.</p>
+      </div>
+      <div class="card">
+        <div class="card-pad" style="overflow-x:auto;">
+          <table class="data-table" id="meta-promo-table"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="meta-audience-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">A quién hemos llegado</span>
+        <h2>Audiencias</h2>
+        <p>La estrategia de segmentación de Meta y lo que los datos disponibles permiten (y no permiten) afirmar sobre a quién hemos llegado realmente.</p>
+      </div>
+      <div class="audience-meta" id="meta-audience-meta"></div>
+      <h4 style="font-family:var(--ff-title);color:var(--blue-ink);margin-bottom:6px;">Segmentos utilizados para construir las audiencias</h4>
+      <div class="chip-cloud" id="meta-audience-chips"></div>
+      <div class="callout warn" id="meta-audience-caveat"></div>
+    </div>
+  </section>
+
+  <svg class="smile-divider" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0,0 C300,45 900,45 1200,0 L1200,40 L0,40 Z" fill="#eaf8fd"></path></svg>
+
+  <section class="block tint" id="meta-strategy-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Evolución de la estrategia</span>
+        <h2>Cómo hemos llegado hasta aquí</h2>
+        <p>De decenas de campañas tácticas a una estructura always-on centrada en eficiencia y suscripción.</p>
+      </div>
+      <div class="timeline" id="meta-strategy-timeline"></div>
+    </div>
+  </section>
+
+  <section class="block" id="meta-funnel-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">MOFU + BOFU</span>
+        <h2>Cómo se complementan captación y conversión</h2>
+      </div>
+      <div class="funnel-grid" id="meta-funnel-grid"></div>
+    </div>
+  </section>
+
+  <section class="block tint" id="meta-creatives-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Lo que ha visto la audiencia</span>
+        <h2>Creatividades por promoción</h2>
+        <p>Las piezas activas en julio y agosto, agrupadas por promoción / producto.</p>
+      </div>
+      <div class="creative-groups" id="meta-creatives-julio"></div>
+    </div>
+  </section>
+
+  <section class="block" id="meta-creatives-agosto-section">
+    <div class="wrap">
+      <div class="creative-groups" id="meta-creatives-agosto"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================= PANEL GOOGLE ============================= -->
+<main id="panel-google" class="hide">
+
+  <section class="block tint" id="google-campaigns-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Ahora mismo</span>
+        <h2>Campañas activas en Google Ads</h2>
+        <p>8 campañas habilitadas hoy, organizadas por prioridad de negocio: Suscripción, Brand, Productos y Lanzamientos/Promos.</p>
+      </div>
+      <div id="google-active-campaigns"></div>
+    </div>
+  </section>
+
+  <svg class="smile-divider" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0,0 C300,45 900,45 1200,0 L1200,40 L0,40 Z" fill="#ffffff"></path></svg>
+
+  <section class="block" id="google-restructure-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">El cambio más importante del periodo</span>
+        <h2>Reestructuración de la cuenta</h2>
+        <p>Antes de la reestructuración la cuenta arrastraba campañas antiguas y creatividades sin actualizar. Así ha quedado organizada ahora.</p>
+      </div>
+      <div class="restructure-grid" id="google-restructure-grid"></div>
+      <div class="callout" id="google-restructure-note"></div>
+    </div>
+  </section>
+
+  <section class="block tint" id="google-impact-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">¿Ha mejorado?</span>
+        <h2>Impacto de la reestructuración</h2>
+        <p>Comparativa de la estructura actual (8 campañas) frente a su propio periodo anterior (3 may–30 jun 2026).</p>
+      </div>
+      <div class="compare-grid" id="google-impact-compare"></div>
+      <div id="google-impact-narrative"></div>
+      <h4 style="font-family:var(--ff-title);color:var(--blue-ink);margin:28px 0 12px;">Rendimiento por tipo de campaña</h4>
+      <div class="card"><div class="card-pad" style="overflow-x:auto;"><table class="data-table" id="google-type-table"></table></div></div>
+    </div>
+  </section>
+
+  <section class="block" id="google-priorities-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Prioridades de negocio</span>
+        <h2>Suscripción · Brand · Productos</h2>
+      </div>
+      <div class="priority-grid" id="google-priorities-grid"></div>
+    </div>
+  </section>
+
+  <svg class="smile-divider" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0,40 C300,-5 900,-5 1200,40 L1200,0 L0,0 Z" fill="#eaf8fd"></path></svg>
+
+  <section class="block tint" id="google-keywords-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Keywords y audiencias</span>
+        <h2>Qué sabemos (y qué no) a este nivel de detalle</h2>
+      </div>
+      <div class="callout warn" id="google-keywords-note"></div>
+    </div>
+  </section>
+
+  <section class="block" id="google-creatives-section">
+    <div class="wrap">
+      <div class="block-head">
+        <span class="kicker">Creatividades</span>
+        <h2>Recursos visuales de Google Ads</h2>
+      </div>
+      <div class="callout warn" id="google-creatives-note"></div>
+    </div>
+  </section>
+
+</main>
+
+<svg class="smile-divider" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0,0 C300,45 900,45 1200,0 L1200,40 L0,40 Z" fill="#06283f"></path></svg>
+
+<!-- ============================= VISIÓN CONJUNTA ============================= -->
+<section class="block" style="background:var(--blue-ink);color:#fff;" id="joint-section">
+  <div class="wrap">
+    <div class="block-head">
+      <span class="kicker" style="color:#7fd4f5;">Meta + Google</span>
+      <h2 style="color:#fff;">Visión conjunta de ambos canales</h2>
+      <p style="color:#c9e4ef;">Aunque la navegación separa Meta y Google, el negocio es uno solo. Así se complementan.</p>
+    </div>
+    <div class="joint-table-wrap">
+      <table class="joint-table" id="joint-table"></table>
+    </div>
+    <p style="color:#8fb8c8;font-size:.8rem;margin-top:10px;">* Compras (Meta) + conversiones (Google) sumadas por transparencia, pero no representan usuarios únicos: cada plataforma atribuye y cuenta las conversiones con su propia metodología.</p>
+    <div class="role-grid" id="joint-roles"></div>
+  </div>
+</section>
+
+<!-- ============================= CONCLUSIONES ============================= -->
+<section class="block tint" id="conclusions-section">
+  <div class="wrap">
+    <div class="block-head">
+      <span class="kicker">Conclusión ejecutiva</span>
+      <h2>Qué significa todo esto para el negocio</h2>
+      <p>Dato → interpretación → impacto.</p>
+    </div>
+    <div class="conclusions" id="conclusions-list"></div>
+  </div>
+</section>
+
+<!-- ============================= FOOTER ============================= -->
+<footer class="site-footer">
+  <img src="assets/img/logo-blue.png" alt="Smileat">
+  <div>Paid Media Performance · 1 julio – 28 agosto 2026 · Elaborado a partir de los exports de Meta Ads Manager y Google Ads.</div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox hide" id="lightbox"><button class="close" id="lightbox-close">&times;</button><img id="lightbox-img" src="" alt=""></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
