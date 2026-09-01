@@ -10,19 +10,26 @@ const DATA = {
 
   meta: {
     period: "1 jul – 28 ago 2026",
-    periodPrev: "1 jul – 28 ago 2025",
+    periodPrevYear: "1 jul – 28 ago 2025",
+    periodPrevMonth: "3 may – 30 jun 2026",
     spend: 45315.20,
-    spendPrev: 47585.94,
+    spendPrevYear: 47585.94,
+    spendPrevMonth: 53761.57,
     impressions: 15814775,
-    impressionsPrev: 16260785,
+    impressionsPrevYear: 16260785,
+    impressionsPrevMonth: 17707599,
     reach: 1593604,
-    reachPrev: 2627651,
+    reachPrevYear: 2627651,
+    reachPrevMonth: 3307348,
     purchases: 4505,
-    purchasesPrev: 4672,
+    purchasesPrevYear: 4672,
+    purchasesPrevMonth: 5414,
     revenueEst: 212346.59,
     roasEst: 4.69,
     cpa: 10.06,
-    note: "El export de Meta no incluye una columna de ROAS ni de valor de conversión por separado para el periodo 2025, por lo que la comparativa de ingresos y ROAS 2025 se marca N/D. Los ingresos 2026 son una estimación (ROAS × inversión) por campaña.",
+    cpaPrevYear: 10.19,
+    cpaPrevMonth: 9.93,
+    note: "El export de Meta no incluye una columna de ROAS ni de valor de conversión por separado para los periodos de comparación (ni año anterior ni periodo anterior), por lo que la comparativa de ingresos y ROAS se marca N/D en ambos casos. Los ingresos 2026 son una estimación (ROAS × inversión) por campaña.",
 
     // Estado de entrega de todas las campañas históricas del account (158 filas del export)
     accountHealth: { total: 158, active: 2, archived: 2, notDelivering: 1, inactive: 153 },
@@ -155,30 +162,32 @@ const DATA = {
 
   google: {
     period: "1 jul – 28 ago 2026",
-    periodPrev: "3 may – 30 jun 2026",
-    periodPrevNote: "El export de Google Ads compara con el periodo inmediatamente anterior de la misma duración (59 días), no con el mismo periodo de 2025 — ese es el dato que ofrece nativamente el informe descargado.",
+    periodPrevMonth: "3 may – 30 jun 2026",
+    periodPrevYear: "1 jul – 28 ago 2025",
+    periodPrevNote: "Google Ads permite comparar con el periodo inmediatamente anterior de la misma duración (59 días) o con el mismo rango del año anterior. Se muestran ambas comparativas, seleccionables desde el botón de arriba.",
 
     // Total: Cuenta (todo lo que tuvo actividad en el periodo, incluida actividad ya pausada / legacy)
     accountTotal: {
-      spend: 17537.45, spendPrev: 18815.35,
-      impressions: 3025677, impressionsPrev: 5709831,
-      clicks: 49540, clicksPrev: 53994,
-      ctr: 1.64, ctrPrev: 0.95,
-      users: 948190, usersPrev: 2233127,
-      conversions: 4701.73, conversionsPrev: 4544.77,
-      value: 260208.26, valuePrev: 277746.00,
-      cpa: 3.73, cpaPrev: 4.14,
-      roas: 14.84, roasPrev: 14.76
+      spend: 17537.45, spendPrevMonth: 18815.35, spendPrevYear: 17579.24,
+      impressions: 3025677, impressionsPrevMonth: 5709831, impressionsPrevYear: 9718929,
+      clicks: 49540, clicksPrevMonth: 53994, clicksPrevYear: 63567,
+      ctr: 1.64, ctrPrevMonth: 0.95, ctrPrevYear: 0.65,
+      users: 948190, usersPrevMonth: 2233127, usersPrevYear: 2084783,
+      conversions: 4701.73, conversionsPrevMonth: 4544.77, conversionsPrevYear: 10390.86,
+      value: 260208.26, valuePrevMonth: 277746.00, valuePrevYear: 415035.15,
+      cpa: 3.73, cpaPrevMonth: 4.14, cpaPrevYear: 1.74,
+      roas: 14.84, roasPrevMonth: 14.76, roasPrevYear: 22.96
     },
 
     // Total: Campañas filtradas = suma de las 8 campañas activas hoy
     currentStructureTotal: {
-      spend: 10323.59, spendPrev: 8366.92,
-      impressions: 1099325, impressionsPrev: 2061584,
-      clicks: 39535, clicksPrev: 26241,
-      conversions: 4411.79, conversionsPrev: 2273.62,
-      value: 249515.15, valuePrev: 136336.02,
-      roas: 24.17, roasPrev: 16.29
+      spend: 10323.59, spendPrevMonth: 8366.92, spendPrevYear: 1457.33,
+      impressions: 1099325, impressionsPrevMonth: 2061584, impressionsPrevYear: 32658,
+      clicks: 39535, clicksPrevMonth: 26241, clicksPrevYear: 14889,
+      conversions: 4411.79, conversionsPrevMonth: 2273.62, conversionsPrevYear: 4701.06,
+      value: 249515.15, valuePrevMonth: 136336.02, valuePrevYear: 285298.59,
+      roas: 24.17, roasPrevMonth: 16.29, roasPrevYear: 195.77,
+      roasPrevYearNote: "Hace un año, de las 8 campañas activas hoy, solo la campaña de Brand estaba en marcha (32.658 impresiones), con muy poco gasto — por eso el ROAS interanual de la estructura actual sale desproporcionadamente alto y no es comparable en términos reales."
     },
 
     activeCampaigns: [
@@ -193,12 +202,12 @@ const DATA = {
     ],
 
     byType: [
-      { type: "Búsqueda", spend: 2044.92, spendPrev: 2169.49, conversions: 3098.36, conversionsPrev: 2169.49, value: 181446.96, valuePrev: 130986.40, roas: 88.73, roasPrev: 60.38 },
-      { type: "Rendimiento máximo", spend: 7224.34, spendPrev: 4962.54, conversions: 1456.52, conversionsPrev: 2297.47, value: 76885.21, valuePrev: 143279.05, roas: 10.64, roasPrev: 28.87 },
-      { type: "Generación de demanda", spend: 2435.44, spendPrev: 6266.16, conversions: 31.84, conversionsPrev: 76.81, value: 1510.61, valuePrev: 3450.79, roas: 0.62, roasPrev: 0.55 },
-      { type: "Display", spend: 490.15, spendPrev: 0, conversions: 5.00, conversionsPrev: 0, value: 255.48, valuePrev: 0, roas: 0.52, roasPrev: null },
-      { type: "Vídeo", spend: 5326.20, spendPrev: null, conversions: 110.00, conversionsPrev: 0, value: 110.00, valuePrev: 0, roas: 0.02, roasPrev: null },
-      { type: "Shopping", spend: 0, spendPrev: 24.51, conversions: 0, conversionsPrev: 1.00, value: 0, valuePrev: 29.76, roas: null, roasPrev: 1.21 }
+      { type: "Búsqueda", spend: 2044.92, spendPrevMonth: 2169.49, spendPrevYear: 2060.58, conversions: 3098.36, conversionsPrevMonth: 2169.49, conversionsPrevYear: 4977.33, value: 181446.96, valuePrevMonth: 130986.40, valuePrevYear: 296458.19, roas: 88.73, roasPrevMonth: 60.38, roasPrevYear: 165.45 },
+      { type: "Rendimiento máximo", spend: 7224.34, spendPrevMonth: 4962.54, spendPrevYear: 7086.50, conversions: 1456.52, conversionsPrevMonth: 2297.47, conversionsPrevYear: 2460.59, value: 76885.21, valuePrevMonth: 143279.05, valuePrevYear: 112492.74, roas: 10.64, roasPrevMonth: 28.87, roasPrevYear: 15.87 },
+      { type: "Generación de demanda", spend: 2435.44, spendPrevMonth: 6266.16, spendPrevYear: 2575.17, conversions: 31.84, conversionsPrevMonth: 76.81, conversionsPrevYear: 2769.00, value: 1510.61, valuePrevMonth: 3450.79, valuePrevYear: 2769.00, roas: 0.62, roasPrevMonth: 0.55, roasPrevYear: 1.08 },
+      { type: "Display", spend: 490.15, spendPrevMonth: 0, spendPrevYear: null, conversions: 5.00, conversionsPrevMonth: 0, conversionsPrevYear: 0, value: 255.48, valuePrevMonth: 0, valuePrevYear: 0, roas: 0.52, roasPrevMonth: null, roasPrevYear: null },
+      { type: "Vídeo", spend: 5326.20, spendPrevMonth: null, spendPrevYear: 6370.00, conversions: 110.00, conversionsPrevMonth: 0, conversionsPrevYear: 104.00, value: 110.00, valuePrevMonth: 0, valuePrevYear: 142.45, roas: 0.02, roasPrevMonth: null, roasPrevYear: 0.02 },
+      { type: "Shopping", spend: 0, spendPrevMonth: 24.51, spendPrevYear: 280.55, conversions: 0, conversionsPrevMonth: 1.00, conversionsPrevYear: 79.93, value: 0, valuePrevMonth: 29.76, valuePrevYear: 3172.77, roas: null, roasPrevMonth: 1.21, roasPrevYear: 11.31 }
     ],
 
     restructuring: {

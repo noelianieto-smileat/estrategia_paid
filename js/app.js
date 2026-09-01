@@ -189,46 +189,68 @@ function renderMetaCampaigns(){
    ============================================================ */
 function renderMetaPeriod(){
   const m = DATA.meta;
+  let compareMode = 'month'; // 'month' = vs periodo anterior · 'year' = vs año anterior
+
+  // Selector de comparativa (mensual / anual)
+  const toggleWrap = el('div','result-tabs');
+  const btnMonth = el('button','result-tab-btn active', `Vs. periodo anterior <span style="font-weight:600;opacity:.75;">(${m.periodPrevMonth})</span>`);
+  const btnYear = el('button','result-tab-btn', `Vs. año anterior <span style="font-weight:600;opacity:.75;">(${m.periodPrevYear})</span>`);
+  btnMonth.type = 'button'; btnYear.type = 'button';
+  toggleWrap.appendChild(btnMonth); toggleWrap.appendChild(btnYear);
+  document.getElementById('meta-period-toggle').appendChild(toggleWrap);
 
   // Grupos de cuadros de resultados (tabs / selector interactivo)
-  const groups = [
-    {
-      id: 'rendimiento', label: 'Rendimiento',
-      items: [
-        {l:'Coste por resultado', v: fmtEUR2(m.cpa)},
-        {l:'ROAS', v: fmtX(m.roasEst)},
-        {l:'Ingresos / valor de los resultados', v: fmtEUR(m.revenueEst)},
-        {l:'Compras', v: fmtNum(m.purchases)},
-      ]
-    },
-    {
-      id: 'alcance', label: 'Inversión y alcance',
-      items: [
-        {l:'Inversión', v: fmtEUR(m.spend)},
-        {l:'Impresiones', v: fmtNum(m.impressions)},
-        {l:'Clics', v: 'N/D', sub: 'No disponible en el export de Meta'},
-        {l:'Alcance', v: fmtNum(m.reach)},
-      ]
-    }
-  ];
+  function buildGroups(){
+    const prevLabel = compareMode==='month' ? 'periodo anterior' : 'año anterior';
+    const noCompareNote = `Sin datos comparables en el export de Meta (ni vs periodo anterior ni vs año anterior)`;
+    return [
+      {
+        id: 'rendimiento', label: 'Rendimiento',
+        items: [
+          {l:'Coste por resultado', now:m.cpa, prev: compareMode==='month'?m.cpaPrevMonth:m.cpaPrevYear, fmt:fmtEUR2, lowerIsBetter:true},
+          {l:'ROAS', now:m.roasEst, prev:null, fmt:fmtX, sub:noCompareNote},
+          {l:'Ingresos / valor de los resultados', now:m.revenueEst, prev:null, fmt:fmtEUR, sub:noCompareNote},
+          {l:'Compras', now:m.purchases, prev: compareMode==='month'?m.purchasesPrevMonth:m.purchasesPrevYear, fmt:fmtNum},
+        ]
+      },
+      {
+        id: 'alcance', label: 'Inversión y alcance',
+        items: [
+          {l:'Inversión', now:m.spend, prev: compareMode==='month'?m.spendPrevMonth:m.spendPrevYear, fmt:fmtEUR, lowerIsBetter:true},
+          {l:'Impresiones', now:m.impressions, prev: compareMode==='month'?m.impressionsPrevMonth:m.impressionsPrevYear, fmt:fmtNum},
+          {l:'Clics', now:null, prev:null, fmt:()=>'N/D', sub:'No disponible en el export de Meta'},
+          {l:'Alcance', now:m.reach, prev: compareMode==='month'?m.reachPrevMonth:m.reachPrevYear, fmt:fmtNum},
+        ]
+      }
+    ];
+  }
 
   const tabsWrap = el('div','result-tabs');
-  groups.forEach((g,i)=>{
-    const btn = el('button', `result-tab-btn${i===0?' active':''}`, g.label);
-    btn.type = 'button';
-    btn.dataset.tab = g.id;
-    tabsWrap.appendChild(btn);
-  });
-
   const panelsWrap = el('div','result-tab-panels');
-  groups.forEach((g,i)=>{
-    const panel = el('div', `result-tab-panel compare-grid${i===0?' active':''}`);
-    panel.dataset.tabPanel = g.id;
-    g.items.forEach(it=>{
-      panel.appendChild(el('div','compare-card', `<div class="label">${it.l}</div><div class="value">${it.v}</div>${it.sub?`<div class="sub-nd">${it.sub}</div>`:''}`));
+
+  function renderPanels(){
+    const groups = buildGroups();
+    tabsWrap.innerHTML = '';
+    panelsWrap.innerHTML = '';
+    groups.forEach((g,i)=>{
+      const btn = el('button', `result-tab-btn${i===0?' active':''}`, g.label);
+      btn.type = 'button';
+      btn.dataset.tab = g.id;
+      tabsWrap.appendChild(btn);
+
+      const panel = el('div', `result-tab-panel compare-grid${i===0?' active':''}`);
+      panel.dataset.tabPanel = g.id;
+      g.items.forEach(it=>{
+        const deltaHtml = it.sub ? `<div class="sub-nd">${it.sub}</div>` : deltaPill(it.now, it.prev, {label: prevLabelFor(), lowerIsBetter: it.lowerIsBetter});
+        panel.appendChild(el('div','compare-card', `<div class="label">${it.l}</div><div class="value">${it.fmt(it.now)}</div>${deltaHtml}`));
+      });
+      panelsWrap.appendChild(panel);
     });
-    panelsWrap.appendChild(panel);
-  });
+  }
+
+  function prevLabelFor(){
+    return compareMode==='month' ? `periodo anterior (${m.periodPrevMonth})` : `año anterior (${m.periodPrevYear})`;
+  }
 
   const host = document.getElementById('meta-period-compare');
   host.classList.remove('compare-grid');
@@ -242,6 +264,17 @@ function renderMetaPeriod(){
     btn.classList.add('active');
     panelsWrap.querySelectorAll('.result-tab-panel').forEach(p=> p.classList.toggle('active', p.dataset.tabPanel===btn.dataset.tab));
   });
+
+  toggleWrap.addEventListener('click', e=>{
+    const btn = e.target.closest('.result-tab-btn');
+    if(!btn) return;
+    compareMode = btn===btnMonth ? 'month' : 'year';
+    toggleWrap.querySelectorAll('.result-tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPanels();
+  });
+
+  renderPanels();
 
   document.getElementById('meta-period-narrative').innerHTML = `
     <div class="callout">
@@ -377,32 +410,73 @@ function renderGoogleRestructure(){
    GOOGLE — Impacto
    ============================================================ */
 function renderGoogleImpact(){
-  const cs = DATA.google.currentStructureTotal;
+  const g = DATA.google;
+  const cs = g.currentStructureTotal;
+  let compareMode = 'month'; // 'month' = vs periodo anterior · 'year' = vs año anterior
+
+  const toggleWrap = el('div','result-tabs');
+  const btnMonth = el('button','result-tab-btn active', `Vs. periodo anterior <span style="font-weight:600;opacity:.75;">(${g.periodPrevMonth})</span>`);
+  const btnYear = el('button','result-tab-btn', `Vs. año anterior <span style="font-weight:600;opacity:.75;">(${g.periodPrevYear})</span>`);
+  btnMonth.type = 'button'; btnYear.type = 'button';
+  toggleWrap.appendChild(btnMonth); toggleWrap.appendChild(btnYear);
+  document.getElementById('google-impact-toggle').appendChild(toggleWrap);
+
   const grid = document.getElementById('google-impact-compare');
-  const items = [
-    {l:'Inversión (estructura actual)', now:cs.spend, prev:cs.spendPrev, f:fmtEUR2},
-    {l:'Conversiones', now:cs.conversions, prev:cs.conversionsPrev, f:fmtNum1},
-    {l:'Valor de conversión', now:cs.value, prev:cs.valuePrev, f:fmtEUR},
-    {l:'ROAS', now:cs.roas, prev:cs.roasPrev, f:fmtX},
-  ];
-  items.forEach(it=> grid.appendChild(el('div','compare-card', `<div class="label">${it.l}</div><div class="value">${it.f(it.now)}</div>${deltaPill(it.now, it.prev, {label:'periodo anterior'})}`)));
 
-  document.getElementById('google-impact-narrative').innerHTML = `
-    <div class="callout">
-      <b>Tras la reestructuración observamos</b> que las 8 campañas de la estructura actual generan un ${pctDelta(cs.conversions,cs.conversionsPrev).toFixed(0)}% más de conversiones y un ${pctDelta(cs.roas,cs.roasPrev).toFixed(0)}% más de ROAS que en su propio periodo anterior (3 may–30 jun 2026). Los datos sugieren que concentrar el presupuesto en Suscripción, Brand, Productos y Lanzamientos — y retirarlo de actividad como la campaña de Vídeo sin conversiones — está mejorando la eficiencia general de la cuenta.
-    </div>`;
+  function render(){
+    const prevLabel = compareMode==='month' ? `periodo anterior (${g.periodPrevMonth})` : `año anterior (${g.periodPrevYear})`;
+    const spendPrev = compareMode==='month' ? cs.spendPrevMonth : cs.spendPrevYear;
+    const convPrev = compareMode==='month' ? cs.conversionsPrevMonth : cs.conversionsPrevYear;
+    const valPrev = compareMode==='month' ? cs.valuePrevMonth : cs.valuePrevYear;
+    const roasPrev = compareMode==='month' ? cs.roasPrevMonth : cs.roasPrevYear;
 
-  const rows = DATA.google.byType.map(t=>`<tr>
-      <td><b>${t.type}</b></td>
-      <td class="num">${fmtEUR2(t.spend)}</td>
-      <td class="num">${fmtNum1(t.conversions)}</td>
-      <td class="num">${fmtEUR(t.value)}</td>
-      <td class="num">${t.roas!=null?fmtX(t.roas):'N/D'}</td>
-      <td class="num">${t.roasPrev!=null?fmtX(t.roasPrev):'N/D'}</td>
-    </tr>`).join('');
-  document.getElementById('google-type-table').innerHTML = `
-    <thead><tr><th>Tipo de campaña</th><th class="num">Inversión</th><th class="num">Conversiones</th><th class="num">Valor</th><th class="num">ROAS actual</th><th class="num">ROAS periodo anterior</th></tr></thead>
-    <tbody>${rows}</tbody>`;
+    const items = [
+      {l:'Inversión (estructura actual)', now:cs.spend, prev:spendPrev, f:fmtEUR2, lowerIsBetter:true},
+      {l:'Conversiones', now:cs.conversions, prev:convPrev, f:fmtNum1},
+      {l:'Valor de conversión', now:cs.value, prev:valPrev, f:fmtEUR},
+      {l:'ROAS', now:cs.roas, prev:roasPrev, f:fmtX, sub: compareMode==='year' ? cs.roasPrevYearNote : null},
+    ];
+    grid.innerHTML = '';
+    items.forEach(it=> grid.appendChild(el('div','compare-card', `<div class="label">${it.l}</div><div class="value">${it.f(it.now)}</div>${deltaPill(it.now, it.prev, {label:prevLabel, lowerIsBetter:it.lowerIsBetter})}${it.sub?`<div class="sub-nd">${it.sub}</div>`:''}`)));
+
+    const convDelta = pctDelta(cs.conversions, convPrev);
+    const roasDelta = pctDelta(cs.roas, roasPrev);
+    const dirWord = d => d==null ? 'N/D' : `${Math.abs(d).toFixed(0)}% ${d>=0?'más':'menos'}`;
+    const narrativeExtra = compareMode==='year'
+      ? ` Ojo: hace un año, de estas 8 campañas, solo Brand estaba activa, por lo que la comparativa interanual arranca desde una base casi inexistente y no es representativa del cambio real.`
+      : ' Los datos sugieren que concentrar el presupuesto en Suscripción, Brand, Productos y Lanzamientos — y retirarlo de actividad como la campaña de Vídeo sin conversiones — está mejorando la eficiencia general de la cuenta.';
+    document.getElementById('google-impact-narrative').innerHTML = `
+      <div class="callout">
+        <b>Tras la reestructuración observamos</b> que las 8 campañas de la estructura actual generan ${dirWord(convDelta)} conversiones y ${dirWord(roasDelta)} ROAS que en su propio ${prevLabel}.${narrativeExtra}
+      </div>`;
+
+    const roasPrevLabel = compareMode==='month' ? 'ROAS periodo anterior' : 'ROAS año anterior';
+    const rows = g.byType.map(t=>{
+      const tRoasPrev = compareMode==='month' ? t.roasPrevMonth : t.roasPrevYear;
+      return `<tr>
+        <td><b>${t.type}</b></td>
+        <td class="num">${fmtEUR2(t.spend)}</td>
+        <td class="num">${fmtNum1(t.conversions)}</td>
+        <td class="num">${fmtEUR(t.value)}</td>
+        <td class="num">${t.roas!=null?fmtX(t.roas):'N/D'}</td>
+        <td class="num">${tRoasPrev!=null?fmtX(tRoasPrev):'N/D'}</td>
+      </tr>`;
+    }).join('');
+    document.getElementById('google-type-table').innerHTML = `
+      <thead><tr><th>Tipo de campaña</th><th class="num">Inversión</th><th class="num">Conversiones</th><th class="num">Valor</th><th class="num">ROAS actual</th><th class="num">${roasPrevLabel}</th></tr></thead>
+      <tbody>${rows}</tbody>`;
+  }
+
+  toggleWrap.addEventListener('click', e=>{
+    const btn = e.target.closest('.result-tab-btn');
+    if(!btn) return;
+    compareMode = btn===btnMonth ? 'month' : 'year';
+    toggleWrap.querySelectorAll('.result-tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+
+  render();
 }
 
 /* ============================================================
@@ -450,12 +524,12 @@ function renderJoint(){
 function renderConclusions(){
   const m = DATA.meta, g = DATA.google, c = DATA.combined, cs = g.currentStructureTotal;
   const items = [
-    {t:'La eficiencia global es sólida, con Google como motor de rentabilidad', dato:`ROAS combinado de ${fmtX(c.roas)} (Meta ${fmtX(m.roasEst)}, Google ${fmtX(g.accountTotal.roas)})`, interp:'Google convierte demanda ya cualificada (Brand, Search Suscripción) a un coste muy inferior; Meta invierte más en construir esa demanda desde cero.'},
-    {t:'La reestructuración de Google está funcionando', dato:`+${pctDelta(cs.conversions,cs.conversionsPrev).toFixed(0)}% conversiones y +${pctDelta(cs.roas,cs.roasPrev).toFixed(0)}% ROAS en la estructura actual vs su periodo anterior`, interp:'Concentrar la cuenta en Suscripción, Brand, Productos y Lanzamientos, retirando actividad como la campaña de Vídeo sin conversiones, coincide con una mejora clara de eficiencia.'},
-    {t:'La campaña Brand de Google es el activo más rentable de toda la cuenta', dato:`ROAS 134,55x y CPA de 0,44€ en "ES | ESP | Search | Brand | Smileat"`, interp:'Es tráfico de máxima intención (gente que ya busca "Smileat"); su coste es bajísimo porque compite con poca puja.'},
-    {t:'La suscripción ya tiene presencia propia en ambos canales, pero el volumen aún es bajo en Google', dato:`Suscripción en Google: ${fmtEUR2(733.35+1750.16+2035.53)} invertidos, ROAS Search 9,19x pero Demand Gen solo 0,74x`, interp:'El Demand Gen de Suscripción tiene mucho alcance (403.784 impresiones) pero conversión débil; el Search y el PMax de Suscripción sí funcionan.'},
-    {t:'Neverita fue la promoción más rentable del verano', dato:`ROAS medio ~10,1x, ${fmtNum(881)} compras asociadas`, interp:'Un regalo con la compra (+40€) superó claramente al resto de promociones de descuento directo (15%/25%, con ROAS 7,15x).'},
-    {t:'El lanzamiento de Smileat Kids arranca con muy buenas señales, aún con poco volumen', dato:`ROAS 9,35x en Meta (257€ invertidos) y 46.162 impresiones ya generadas en Google Demand Gen sin coste`, interp:'Es el lanzamiento más reciente (25 de agosto); los primeros indicadores de eficiencia son los mejores de la cuenta, pero la base de datos es aún pequeña para sacar conclusiones firmes.'},
+    {t:'La eficiencia global es sólida, con Google como motor de rentabilidad', dato:`ROAS combinado de ${fmtX(c.roas)} (Meta ${fmtX(m.roasEst)}, Google ${fmtX(g.accountTotal.roas)})`, interp:'Google convierte demanda ya cualificada (Brand, Search Suscripción) a un coste muy inferior; Meta invierte más en construir esa demanda desde cero.', impacto:'El CPA combinado se mantiene competitivo pese a que Meta concentra el 72% del presupuesto.', reco:'Mantener el peso presupuestario actual, pero vigilar que Meta no absorba más presupuesto de Google sin justificarlo en volumen de captación nueva.'},
+    {t:'La reestructuración de Google está funcionando', dato:`+${pctDelta(cs.conversions,cs.conversionsPrevMonth).toFixed(0)}% conversiones y +${pctDelta(cs.roas,cs.roasPrevMonth).toFixed(0)}% ROAS en la estructura actual vs su periodo anterior`, interp:'Concentrar la cuenta en Suscripción, Brand, Productos y Lanzamientos, retirando actividad como la campaña de Vídeo sin conversiones, coincide con una mejora clara de eficiencia.', impacto:`7.213,86€ de gasto "legacy" ya han salido de la estructura actual.`, reco:'Formalizar el cierre definitivo de cualquier campaña legacy restante y documentar el export "antes" para poder auditar el impacto con más rigor en el próximo informe.'},
+    {t:'La campaña Brand de Google es el activo más rentable de toda la cuenta', dato:`ROAS 134,55x y CPA de 0,44€ en "ES | ESP | Search | Brand | Smileat"`, interp:'Es tráfico de máxima intención (gente que ya busca "Smileat"); su coste es bajísimo porque compite con poca puja.', impacto:'Cualquier caída de inversión de marca (o de posicionamiento orgánico) tendría un efecto desproporcionado sobre el ROAS medio de la cuenta.', reco:'Proteger el presupuesto de Brand como mínimo innegociable y vigilar el Quality Score / cuota de impresiones para no perder esta eficiencia.'},
+    {t:'La suscripción ya tiene presencia propia en ambos canales, pero el volumen aún es bajo en Google', dato:`Suscripción en Google: ${fmtEUR2(733.35+1750.16+2035.53)} invertidos, ROAS Search 9,19x pero Demand Gen solo 0,74x`, interp:'El Demand Gen de Suscripción tiene mucho alcance (403.784 impresiones) pero conversión débil; el Search y el PMax de Suscripción sí funcionan.', impacto:'Parte del presupuesto de Suscripción en Google no está generando el retorno del resto de la cuenta.'},
+    {t:'Neverita fue la promoción más rentable del verano', dato:`ROAS medio ~10,1x, ${fmtNum(881)} compras asociadas`, interp:'Un regalo con la compra (+40€) superó claramente al resto de promociones de descuento directo (15%/25%, con ROAS 7,15x).', impacto:'Sugiere que los incentivos de regalo pueden ser más eficientes que el descuento puro para este público.'},
+    {t:'El lanzamiento de Smileat Kids arranca con muy buenas señales, aún con poco volumen', dato:`ROAS 9,35x en Meta (257€ invertidos) y 46.162 impresiones ya generadas en Google Demand Gen sin coste`, interp:'Es el lanzamiento más reciente (25 de agosto); los primeros indicadores de eficiencia son los mejores de la cuenta, pero la base de datos es aún pequeña para sacar conclusiones firmes.', impacto:'Kids tiene potencial para convertirse en una nueva línea de inversión relevante si el ROAS se sostiene con más volumen.'},
   ];
   document.getElementById('conclusions-list').innerHTML = items.map((it,i)=>`
     <div class="conclusion-card">
@@ -464,6 +538,7 @@ function renderConclusions(){
         <h4>${it.t}</h4>
         <div class="conclusion-row"><b>Dato:</b><span>${it.dato}</span></div>
         <div class="conclusion-row"><b>Interpretación:</b><span>${it.interp}</span></div>
+        <div class="conclusion-row"><b>Impacto:</b><span>${it.impacto}</span></div>
       </div>
     </div>`).join('');
 }
